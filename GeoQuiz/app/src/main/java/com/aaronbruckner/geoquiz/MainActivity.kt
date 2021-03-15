@@ -88,8 +88,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveToNextQuestion(direction: Int) {
+        if (currentIndex == questionBank.size - 1) {
+            showUserScore()
+        }
         currentIndex = (currentIndex + direction).coerceAtLeast(0) % questionBank.size
         updateQuestion()
+    }
+
+    private fun showUserScore() {
+        val totalQuestionsAnswered = questionBank.count { it.userAnswer != null }
+        val totalCorrectAnswers = questionBank.count {it.userAnswer == it.answer}
+        Toast.makeText(this, "You got $totalCorrectAnswers out of $totalQuestionsAnswered correct", Toast.LENGTH_LONG).show()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
