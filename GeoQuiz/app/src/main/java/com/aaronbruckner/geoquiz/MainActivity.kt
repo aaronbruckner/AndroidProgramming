@@ -2,13 +2,16 @@ package com.aaronbruckner.geoquiz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
+import androidx.lifecycle.ViewModelProvider
 
 private const val TAG = "MainActivity"
 
@@ -18,16 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nextButton: View
     private lateinit var prevButton: View
     private lateinit var questionTextView: TextView
-
-    private val questionBank = listOf(
-            Question(R.string.question_australia, true),
-            Question(R.string.question_oceans, true),
-            Question(R.string.question_mideast, false),
-            Question(R.string.question_africa, false),
-            Question(R.string.question_americas, true),
-            Question(R.string.question_asia, true)
-    )
-    private var currentIndex: Int = 0
+    private val quizViewModel: QuizViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,22 +81,26 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onDestroy()")
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        Log.d(TAG, "onSaveInstanceState()")
+        quizViewModel.save()
+        super.onSaveInstanceState(outState)
+    }
+
     private fun moveToNextQuestion(direction: Int) {
-        if (currentIndex == questionBank.size - 1) {
+        if (quizViewModel.isLastQuestion) {
             showUserScore()
         }
-        currentIndex = (currentIndex + direction).coerceAtLeast(0) % questionBank.size
+        quizViewModel.moveToNextQuestion(direction)
         updateQuestion()
     }
 
     private fun showUserScore() {
-        val totalQuestionsAnswered = questionBank.count { it.userAnswer != null }
-        val totalCorrectAnswers = questionBank.count {it.userAnswer == it.answer}
-        Toast.makeText(this, "You got $totalCorrectAnswers out of $totalQuestionsAnswered correct", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "You got ${quizViewModel.totalQuestionsAnswered} out of ${quizViewModel.totalQuestionsCorrect} correct", Toast.LENGTH_LONG).show()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val question: Question = getCurrentQuestion()
+        val question: Question = quizViewModel.currentQuestion
         question.userAnswer = userAnswer
         val isUserCorrect = question.answer == userAnswer
         showResultToast(if (isUserCorrect) R.string.correct_toast else R.string.incorrect_toast)
@@ -116,13 +114,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        val question: Question = getCurrentQuestion()
+        val question: Question = quizViewModel.currentQuestion
         questionTextView.setText(question.textResId)
         trueButton.isEnabled = question.userAnswer == null
         falseButton.isEnabled = question.userAnswer == null
-    }
-
-    private fun getCurrentQuestion(): Question {
-        return questionBank[currentIndex]
     }
 }
