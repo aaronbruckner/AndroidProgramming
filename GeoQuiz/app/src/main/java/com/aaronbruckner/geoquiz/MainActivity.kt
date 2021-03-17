@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showUserScore() {
-        Toast.makeText(this, "You got ${quizViewModel.totalQuestionsAnswered} out of ${quizViewModel.totalQuestionsCorrect} correct", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "You got ${quizViewModel.totalQuestionsCorrect} out of ${quizViewModel.totalQuestionsAnswered} correct", Toast.LENGTH_LONG).show()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
