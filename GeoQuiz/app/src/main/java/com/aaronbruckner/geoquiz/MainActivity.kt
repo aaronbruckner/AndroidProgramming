@@ -1,5 +1,6 @@
 package com.aaronbruckner.geoquiz
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var falseButton: Button
     private lateinit var nextButton: View
     private lateinit var prevButton: View
+    private lateinit var cheatButton: View
     private lateinit var questionTextView: TextView
     private val quizViewModel: QuizViewModel by viewModels()
 
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
         prevButton = findViewById(R.id.prev_button)
+        cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.question_text_view)
 
         // On Click Handlers
@@ -39,6 +42,10 @@ class MainActivity : AppCompatActivity() {
         }
         falseButton.setOnClickListener {
             checkAnswer(false)
+        }
+        cheatButton.setOnClickListener {
+            val intent = Intent(this, CheatActivity::class.java)
+            startActivity(intent)
         }
         questionTextView.setOnClickListener {
             moveToNextQuestion(1)
