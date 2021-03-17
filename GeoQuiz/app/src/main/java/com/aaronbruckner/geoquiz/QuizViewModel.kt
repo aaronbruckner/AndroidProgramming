@@ -8,7 +8,7 @@ private const val KEY_QUESTION_BANK = "KEY_QUESTION_BANK"
 
 class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
 
-    var currentIndex: Int = state.get(KEY_CURRENT_INDEX) ?: 0
+    private var currentIndex: Int = state.get(KEY_CURRENT_INDEX) ?: 0
     private val questionBank = state.get(KEY_QUESTION_BANK) ?: listOf(
         Question(R.string.question_australia, true),
         Question(R.string.question_oceans, true),
