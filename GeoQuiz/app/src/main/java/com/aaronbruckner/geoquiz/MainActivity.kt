@@ -44,8 +44,7 @@ class MainActivity : AppCompatActivity() {
             checkAnswer(false)
         }
         cheatButton.setOnClickListener {
-            val intent = Intent(this, CheatActivity::class.java)
-            startActivity(intent)
+            startCheatActivity()
         }
         questionTextView.setOnClickListener {
             moveToNextQuestion(1)
@@ -90,6 +89,11 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onSaveInstanceState()")
         quizViewModel.save()
         super.onSaveInstanceState(outState)
+    }
+
+    private fun startCheatActivity() {
+        val intent = CheatActivity.newIntent(this, quizViewModel.currentQuestion.answer)
+        startActivity(intent)
     }
 
     private fun moveToNextQuestion(direction: Int) {
