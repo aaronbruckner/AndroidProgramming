@@ -1,21 +1,32 @@
 package com.aaronbruckner.geoquiz
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContract
 
 private const val EXTRA_IS_ANSWER_TRUE = "com.aaronbruckner.geoquiz.is_answer_true"
+private const val EXTRA_DID_CHEAT = "com.aaronbruckner.geoquiz.did_cheat"
 
 class CheatActivity : AppCompatActivity() {
-    companion object {
-        fun newIntent(context: Context, answerIsTrue: Boolean): Intent {
+    class DidCheatContract: ActivityResultContract<Boolean, Boolean>() {
+        override fun createIntent(context: Context, isAnswerTrue: Boolean): Intent {
             return Intent(context, CheatActivity::class.java).apply {
-                putExtra(EXTRA_IS_ANSWER_TRUE, answerIsTrue)
+                putExtra(EXTRA_IS_ANSWER_TRUE, isAnswerTrue)
             }
         }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Boolean {
+            return when(resultCode) {
+                Activity.RESULT_OK -> intent?.getBooleanExtra(EXTRA_DID_CHEAT, false) ?: false
+                else -> false
+            }
+        }
+
     }
 
     private lateinit var showAnswerButton: View
@@ -38,6 +49,9 @@ class CheatActivity : AppCompatActivity() {
     }
 
     private fun showAnswer() {
+        setResult(Activity.RESULT_OK, Intent().apply {
+            putExtra(EXTRA_DID_CHEAT, true)
+        })
         answerTextView.setText(when {
             isAnswerTrue -> R.string.true_button
             else -> R.string.false_button
