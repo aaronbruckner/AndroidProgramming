@@ -43,6 +43,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <TextView
+            android:text="@string/cheats_remaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"/>
+        <TextView
+            android:id="@+id/cheat_remaining_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="3"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <ImageButton
             android:id="@+id/prev_button"
             android:layout_width="wrap_content"

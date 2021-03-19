@@ -25,11 +25,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prevButton: View
     private lateinit var cheatButton: View
     private lateinit var questionTextView: TextView
+    private lateinit var cheatsRemainingCounter: TextView
     private val quizViewModel: QuizViewModel by viewModels()
 
     private val cheatLauncher = registerForActivityResult(CheatActivity.DidCheatContract()) { didCheat: Boolean ->
         if (didCheat) {
             quizViewModel.currentQuestion.didCheat = true
+            updateQuestion()
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         prevButton = findViewById(R.id.prev_button)
         cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.question_text_view)
+        cheatsRemainingCounter = findViewById(R.id.cheat_remaining_counter)
 
         // On Click Handlers
         trueButton.setOnClickListener {
@@ -139,5 +142,7 @@ class MainActivity : AppCompatActivity() {
         questionTextView.setText(question.textResId)
         trueButton.isEnabled = question.userAnswer == null
         falseButton.isEnabled = question.userAnswer == null
+        cheatButton.isEnabled = quizViewModel.remainingCheats > 0
+        cheatsRemainingCounter.setText(quizViewModel.remainingCheats.toString())
     }
 }
