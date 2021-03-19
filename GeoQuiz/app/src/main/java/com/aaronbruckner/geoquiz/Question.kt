@@ -5,4 +5,4 @@ import androidx.annotation.StringRes
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Question(@StringRes val textResId: Int, val answer: Boolean, var userAnswer: Boolean? = null) : Parcelable
+data class Question(@StringRes val textResId: Int, val answer: Boolean, var userAnswer: Boolean? = null, var didCheat: Boolean = false) : Parcelable

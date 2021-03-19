@@ -75,7 +75,7 @@ class CheatActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK, Intent().apply {
-            putExtra(EXTRA_DID_CHEAT, true)
+            putExtra(EXTRA_DID_CHEAT, viewModel.didCheat)
         })
         super.onBackPressed()
     }

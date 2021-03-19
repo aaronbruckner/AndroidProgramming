@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private val cheatLauncher = registerForActivityResult(CheatActivity.DidCheatContract()) { didCheat: Boolean ->
         if (didCheat) {
-            Toast.makeText(this, R.string.judgment_toast, Toast.LENGTH_LONG).show()
+            quizViewModel.currentQuestion.didCheat = true
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,7 +120,11 @@ class MainActivity : AppCompatActivity() {
         val question: Question = quizViewModel.currentQuestion
         question.userAnswer = userAnswer
         val isUserCorrect = question.answer == userAnswer
-        showResultToast(if (isUserCorrect) R.string.correct_toast else R.string.incorrect_toast)
+        showResultToast(when {
+            quizViewModel.currentQuestion.didCheat -> R.string.judgment_toast
+            isUserCorrect -> R.string.correct_toast
+            else -> R.string.incorrect_toast
+        })
         updateQuestion()
     }
 
