@@ -2,23 +2,20 @@ package com.aaronbruckner.geoquiz
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import javax.inject.Named
 
 private const val KEY_CURRENT_INDEX = "KEY_CURRENT_INDEX"
 private const val KEY_QUESTION_BANK = "KEY_QUESTION_BANK"
 private const val MAX_CHEAT_COUNT = 3
 
-class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
+@HiltViewModel
+class QuizViewModel @Inject constructor(private val state: SavedStateHandle, @Named("defaultQuestionBank") defaultQuestionBank: List<Question>) : ViewModel() {
     val remainingCheats: Int
         get() = (MAX_CHEAT_COUNT - questionBank.count { it.didCheat }).coerceAtLeast(0)
     private var currentIndex: Int = state.get(KEY_CURRENT_INDEX) ?: 0
-    private val questionBank = state.get(KEY_QUESTION_BANK) ?: listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
-    )
+    private val questionBank: List<Question> = state.get(KEY_QUESTION_BANK) ?: defaultQuestionBank
 
     val currentQuestion: Question
         get() = questionBank[currentIndex]
