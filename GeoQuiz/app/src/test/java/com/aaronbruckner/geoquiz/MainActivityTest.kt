@@ -3,18 +3,33 @@ package com.aaronbruckner.geoquiz
 import android.view.View
 import android.widget.TextView
 import androidx.test.core.app.ActivityScenario
+import com.aaronbruckner.geoquiz.hilt.ViewModelModule
+import dagger.hilt.android.testing.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
+import javax.inject.Named
 
+@UninstallModules(ViewModelModule::class)
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
+    @get:Rule val hiltRule = HiltAndroidRule(this)
+
     private lateinit var scenario: ActivityScenario<MainActivity>
+
+    @BindValue @Named("defaultQuestionBank") val mockDefaultQuestionBank = listOf(
+        Question(R.string.question_australia, true),
+        Question(R.string.question_mideast, false),
+    )
 
     @Before
     fun beforeEach() {
@@ -42,7 +57,7 @@ class MainActivityTest {
             val prevButton = activity.findViewById<View>(R.id.prev_button)
 
             nextButton.performClick()
-            assertThat(questionTextView.text).isEqualTo("The Pacific Ocean is larger than the Atlantic Ocean.")
+            assertThat(questionTextView.text).isEqualTo("The Suez Canal connects the Red Sea and the Indian Ocean.")
             prevButton.performClick()
             assertThat(questionTextView.text).isEqualTo("Canberra is the capital of Australia.")
         }
