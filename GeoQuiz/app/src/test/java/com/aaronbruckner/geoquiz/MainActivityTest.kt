@@ -1,5 +1,7 @@
 package com.aaronbruckner.geoquiz
 
+import android.app.Activity
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.test.core.app.ActivityScenario
@@ -12,7 +14,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 import javax.inject.Named
@@ -111,6 +115,55 @@ class MainActivityTest {
 
             assertThat(trueButton.isEnabled).isEqualTo(false)
             assertThat(falseButton.isEnabled).isEqualTo(false)
+        }
+    }
+
+    @Test
+    fun `toasts quiz results on the last question`() {
+        scenario.onActivity { activity ->
+            val trueButton = activity.findViewById<View>(R.id.true_button)
+            val nextButton = activity.findViewById<View>(R.id.next_button)
+
+            trueButton.performClick()
+            nextButton.performClick()
+
+            trueButton.performClick()
+            nextButton.performClick()
+
+            assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("You got 1 out of 2 correct")
+        }
+    }
+
+    @Test
+    fun `cheat button starts cheat activity`() {
+        scenario.onActivity { activity ->
+            val shadowActivity = shadowOf(activity)
+            val cheatButton = activity.findViewById<View>(R.id.cheat_button)
+
+            cheatButton.performClick()
+
+            val intent = shadowActivity.peekNextStartedActivityForResult().intent
+            assertThat(shadowOf(intent).intentClass).isEqualTo(CheatActivity::class.java)
+            assertThat(intent.getBooleanExtra("com.aaronbruckner.geoquiz.is_answer_true", false)).isTrue()
+        }
+    }
+
+    @Test
+    fun `catches cheating user`() {
+        scenario.onActivity { activity ->
+            val shadowActivity = shadowOf(activity)
+            val trueButton = activity.findViewById<View>(R.id.true_button)
+            val cheatButton = activity.findViewById<View>(R.id.cheat_button)
+
+            cheatButton.performClick()
+            val intent = shadowActivity.peekNextStartedActivityForResult().intent
+            val resultIntent = Intent().putExtra("com.aaronbruckner.geoquiz.did_cheat", true)
+
+            shadowActivity.receiveResult(intent, Activity.RESULT_OK, resultIntent)
+
+            trueButton.performClick()
+
+            assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Cheating is wrong.")
         }
     }
 }
