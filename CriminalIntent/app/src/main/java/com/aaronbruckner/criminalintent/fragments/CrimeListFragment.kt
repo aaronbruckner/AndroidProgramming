@@ -6,8 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aaronbruckner.criminalintent.R
+import com.aaronbruckner.criminalintent.data.Crime
 import com.aaronbruckner.criminalintent.viewmodels.CrimeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,9 +24,7 @@ private const val TAG = "CrimeListFragment"
  */
 @AndroidEntryPoint
 class CrimeListFragment : Fragment() {
-    companion object {
-        fun newInstance(): CrimeListFragment = CrimeListFragment()
-    }
+    private lateinit var crimeRecyclerView: RecyclerView
     private val viewModel: CrimeListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,43 @@ class CrimeListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_crime_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
+
+        crimeRecyclerView = view.findViewById(R.id.crime_recycler_view)
+        crimeRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        updateUI()
+
+        return view
+    }
+
+    private fun updateUI() {
+        crimeRecyclerView.adapter = CrimeAdapter(viewModel.crimes)
+    }
+
+    companion object {
+        fun newInstance(): CrimeListFragment = CrimeListFragment()
+    }
+
+    private inner class CrimeAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CrimeHolder(
+            layoutInflater.inflate(R.layout.list_item_crime, parent, false)
+        )
+
+        override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
+            val crime = crimes[position]
+            holder.apply {
+                titleTextView.text = crime.title
+                dateTextView.text = crime.date.toString()
+            }
+        }
+
+        override fun getItemCount() = crimes.size
+
+    }
+
+    private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
+        val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
     }
 }
