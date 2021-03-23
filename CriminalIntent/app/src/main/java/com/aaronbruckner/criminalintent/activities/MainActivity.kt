@@ -3,7 +3,7 @@ package com.aaronbruckner.criminalintent.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.aaronbruckner.criminalintent.R
-import com.aaronbruckner.criminalintent.fragments.CrimeFragment
+import com.aaronbruckner.criminalintent.fragments.CrimeListFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (currentFragment == null) {
-            val fragment = CrimeFragment()
+            val fragment = CrimeListFragment.newInstance()
             supportFragmentManager
                     .beginTransaction()
                     .add(R.id.fragment_container, fragment)
