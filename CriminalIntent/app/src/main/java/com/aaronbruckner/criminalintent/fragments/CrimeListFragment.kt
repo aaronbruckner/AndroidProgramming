@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.aaronbruckner.criminalintent.R
 import com.aaronbruckner.criminalintent.viewmodels.CrimeListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "CrimeListFragment"
 
@@ -17,6 +18,7 @@ private const val TAG = "CrimeListFragment"
  * Use the [CrimeListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class CrimeListFragment : Fragment() {
     companion object {
         fun newInstance(): CrimeListFragment = CrimeListFragment()
