@@ -1,6 +1,7 @@
 package com.aaronbruckner.criminalintent.fragments
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -71,6 +72,8 @@ class CrimeListFragment : Fragment() {
         private val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
         private val isSolvedImageView: ImageView = itemView.findViewById(R.id.is_solved_image_view)
+        private val dayDateFormat = DateFormat.getLongDateFormat(this@CrimeListFragment.context)
+        private val timeDateFormat = DateFormat.getTimeFormat(this@CrimeListFragment.context)
 
         init {
             itemView.setOnClickListener(this)
@@ -79,7 +82,7 @@ class CrimeListFragment : Fragment() {
         fun bind(c: Crime) {
             crime = c
             titleTextView.text = crime.title
-            dateTextView.text = crime.date.toString()
+            dateTextView.text = "${dayDateFormat.format(crime.date)} - ${timeDateFormat.format(crime.date)}"
             isSolvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
             } else {
