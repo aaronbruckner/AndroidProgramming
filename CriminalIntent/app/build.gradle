@@ -63,7 +63,7 @@ dependencies {
 
     // Rooms
     implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room:compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
 
 hilt {
