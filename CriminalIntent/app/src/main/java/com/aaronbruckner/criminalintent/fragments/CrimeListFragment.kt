@@ -1,5 +1,6 @@
 package com.aaronbruckner.criminalintent.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -17,6 +18,7 @@ import com.aaronbruckner.criminalintent.R
 import com.aaronbruckner.criminalintent.data.Crime
 import com.aaronbruckner.criminalintent.viewmodels.CrimeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 private const val TAG = "CrimeListFragment"
 
@@ -28,7 +30,13 @@ private const val TAG = "CrimeListFragment"
 @AndroidEntryPoint
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
+    private var callbacks: Callbacks? = null
     private val viewModel: CrimeListViewModel by viewModels()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +60,21 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     private fun updateUI(crimes: List<Crime>) {
         crimeRecyclerView.adapter = CrimeAdapter(crimes)
     }
 
     companion object {
         fun newInstance(): CrimeListFragment = CrimeListFragment()
+    }
+
+    interface Callbacks {
+        fun onCrimeSelected(crimeId: UUID)
     }
 
     private inner class CrimeAdapter(private val crimes: List<Crime>) : RecyclerView.Adapter<CrimeHolder>() {
@@ -97,7 +114,7 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_LONG).show()
+            callbacks?.onCrimeSelected(crime.id)
         }
     }
 }
