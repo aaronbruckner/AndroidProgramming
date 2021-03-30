@@ -32,7 +32,7 @@ class CrimeListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total Crimes: ${viewModel.crimes.size}")
+        Log.d(TAG, "onCreate()")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,14 +40,20 @@ class CrimeListFragment : Fragment() {
 
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view)
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
+        updateUI(emptyList())
 
-        updateUI()
+        viewModel.crimeListLiveData.observe(viewLifecycleOwner) { crimes ->
+            crimes?.let {
+                Log.d(TAG, "New Crime list - Size: ${crimes.size}")
+                updateUI(crimes)
+            }
+        }
 
         return view
     }
 
-    private fun updateUI() {
-        crimeRecyclerView.adapter = CrimeAdapter(viewModel.crimes)
+    private fun updateUI(crimes: List<Crime>) {
+        crimeRecyclerView.adapter = CrimeAdapter(crimes)
     }
 
     companion object {
